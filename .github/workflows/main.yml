@@ -16,7 +16,6 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-          cache: gradle
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v4
@@ -27,8 +26,15 @@ jobs:
         run: |
           sdkmanager "platforms;android-36" "build-tools;36.0.0"
 
-      - name: Make Gradle executable
-        run: chmod +x ./gradlew
+      - name: Install Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.13'
+
+      - name: Generate Gradle Wrapper
+        run: |
+          gradle wrapper --gradle-version 8.13
+          chmod +x ./gradlew
 
       - name: Build Debug APK
         run: ./gradlew assembleDebug --stacktrace --no-daemon
